@@ -1,6 +1,6 @@
+import typing
 from dataclasses import dataclass
 from typing import Sequence, Type
-import typing
 
 
 @dataclass
@@ -94,7 +94,7 @@ class SportsWalking(Training):
                 self.WALK_CAL_WGTH_MULT * self.weight
                 + (
                     self.get_mean_speed()**2 // self.height
-                  )
+                )
                 * self.WALK_CAL_SPEED_MULT * self.weight
             )
             * self.duration * self.MIN_IN_H
