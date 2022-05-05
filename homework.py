@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from typing import Sequence
-
-import typing_extensions
+from typing import Sequence, Type
+import typing
 
 
 @dataclass
@@ -29,12 +28,6 @@ class Training(object):
     M_IN_KM: float = 1000
     LEN_STEP: float = 0.65
     MIN_IN_H: float = 60
-    RUN_CAL_МULT: float = 18
-    RUN_CAL_INCR: float = 20
-    WALK_CAL_WGTH_MULT: float = 0.035
-    WALK_CAL_SPEED_MULT: float = 0.029
-    SWIM_CAL_INCR: float = 1.1
-    SWIM_CAL_MULT: float = 2
 
     def __init__(self,
                  action: float,
@@ -68,6 +61,8 @@ class Training(object):
 
 class Running(Training):
     """Тренировка: бег."""
+    RUN_CAL_МULT: float = 18
+    RUN_CAL_INCR: float = 20
 
     def get_spent_calories(self) -> float:
         return (
@@ -81,6 +76,8 @@ class Running(Training):
 
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
+    WALK_CAL_WGTH_MULT: float = 0.035
+    WALK_CAL_SPEED_MULT: float = 0.029
 
     def __init__(self,
                  action,
@@ -95,7 +92,9 @@ class SportsWalking(Training):
         return (
             (
                 self.WALK_CAL_WGTH_MULT * self.weight
-                + (self.get_mean_speed()**2 // self.height)
+                + (
+                    self.get_mean_speed()**2 // self.height
+                  )
                 * self.WALK_CAL_SPEED_MULT * self.weight
             )
             * self.duration * self.MIN_IN_H
@@ -105,6 +104,8 @@ class SportsWalking(Training):
 class Swimming(Training):
     """Тренировка: плавание."""
     LEN_STEP: float = 1.38
+    SWIM_CAL_INCR: float = 1.1
+    SWIM_CAL_MULT: float = 2
 
     def __init__(self,
                  action,
@@ -129,7 +130,7 @@ class Swimming(Training):
 def read_package(workout_type: str,
                  data: Sequence[float]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training_codes: typing_extensions.Dict[str, Training] = {
+    training_codes: typing.Dict[str, Type[Training]] = {
         'SWM': Swimming,
         'RUN': Running,
         'WLK': SportsWalking
@@ -139,7 +140,7 @@ def read_package(workout_type: str,
 
 def main(training: Training) -> None:
     """Главная функция."""
-    print(Training.show_training_info(training).get_message())
+    print(training.show_training_info().get_message())
 
 
 if __name__ == '__main__':
